@@ -9,7 +9,7 @@ variables:
 pool: ec2-agents
 stages:
   - stage: ServiceBuild
-    condition:  eq(variables['build.sourceBranch'], 'refs/heads/feature/*')
+    condition:  startsWith(variables['build.sourceBranch'], 'refs/heads/feature/')
     displayName: Build Service
     jobs:
     - job: BuildMaven
@@ -22,15 +22,26 @@ stages:
       - task: Maven@3
         inputs:
           goals: 'clean install'
+
     - job: BuildImage
       displayName: Build Image
-      container:
-        image: "gcr.io/kaniko-project/executor:debug"
-        options: --entrypoint /busybox/sh
+      dependsOn: BuildMaven
+
       steps:
-      - script: |
-          #!/busybox/sh
-          /kaniko/executor --dockerfile  $(Pipeline.Workspace)/Dockerfile  --context  $(Pipeline.Workspace)/ --destination mohamedhani/$(projectName)
+      - checkout: none
+      - task: Docker@2
+        displayName: buildImage
+        inputs:
+          containerRegistry: 'DockerHub'
+          repository: 'mohaemdhani/$(projectName)'
+          command: 'build'
+          Dockerfile: '**/Dockerfile'
+      - task: Docker@2
+        displayName:  Push Image
+        inputs:
+          containerRegistry: 'DockerHub'
+          repository: 'mohaemdhani/$(projectName)'
+          command: 'push'
       
 
 
