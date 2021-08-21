@@ -9,7 +9,7 @@ variables:
 pool: ec2-agents
 stages:
   - stage: ServiceBuild
-    condition:  eq(variables['build.sourceBranch'], 'refs/heads/feature*')
+    condition:  eq(variables['build.sourceBranch'], 'refs/heads/feature/pipeline')
     displayName: Build Service
     jobs:
     - job: BuildMaven
