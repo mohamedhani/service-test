@@ -22,9 +22,10 @@ stages:
       - task: Maven@3
         inputs:
           goals: 'clean install'
-          
+
     - job: BuildImage
       displayName: Build Image
+      dependsOn: BuildMaven
       steps:
       - task: Docker@2
         displayName: buildImage
