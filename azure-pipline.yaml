@@ -1,0 +1,36 @@
+trigger:
+  branches:
+    include:
+    - feature/*
+    - master
+variables:
+- name: projectName
+  value: test
+pool: ec2-agents
+stages:
+  - stage: ServiceBuild
+    condition:  eq(variables['build.sourceBranch'], 'refs/heads/feature/*')
+    displayName: Build Service
+    jobs:
+    - job: BuildMaven
+      workspace: 
+        clean: all
+      displayName: Build Maven
+      container: 
+        image: 'mohamedhani/maven'
+      steps: 
+      - task: Maven@3
+        inputs:
+          goals: 'clean install'
+    - job: BuildImage
+      displayName: Build Image
+      container:
+        image: "gcr.io/kaniko-project/executor:debug"
+        options: --entrypoint /busybox/sh
+      steps:
+      - script: |
+          #!/busybox/sh
+          /kaniko/executor --dockerfile  $(Pipeline.Workspace)/Dockerfile  --context  $(Pipeline.Workspace)/ --destination mohamedhani/$(projectName)
+      
+
+
