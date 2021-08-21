@@ -24,6 +24,7 @@ stages:
           goals: 'clean install'
     - job: BuildImage
       displayName: Build Image
+      dependsOn: BuildMaven
       container:
         image: "gcr.io/kaniko-project/executor:debug"
         options: --entrypoint /busybox/sh
