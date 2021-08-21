@@ -15,13 +15,13 @@ stages:
 
     - job: BuildImage
       displayName: Build Image
-      container:
-        image: "gcr.io/kaniko-project/executor:debug"
-        options: --entrypoint "/busybox/cat"  
       steps:
-      - script: |
-          #!/busybox/sh
-          /kaniko/executor --dockerfile  $(Pipeline.Workspace)/Dockerfile  --context  $(Pipeline.Workspace)/ --destination mohamedhani/$(projectName)
+      - task: Docker@2
+        inputs:
+          containerRegistry: 'DockerHub'
+          repository: 'mohaemdhani/$(projectName)'
+          command: 'build'
+          Dockerfile: '**/Dockerfile'
       
 
 
