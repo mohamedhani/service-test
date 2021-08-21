@@ -7,7 +7,7 @@ variables:
 - name: projectName
   value: test
 pool: ec2-agents
-stages
+
 stages:
   - stage: ServiceBuild
     condition:  eq(variables['build.sourceBranch'], 'refs/heads/feature*')
