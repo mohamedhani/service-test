@@ -12,16 +12,33 @@ stages:
     condition:  startsWith(variables['build.sourceBranch'], 'refs/heads/feature/')
     displayName: Build Service
     jobs:
-
+    - job: BuildMaven
+      workspace: 
+        clean: all
+      displayName: Build Maven
+      container: 
+        image: 'mohamedhani/maven'
+      steps: 
+      - task: Maven@3
+        inputs:
+          goals: 'clean install'
+          
     - job: BuildImage
       displayName: Build Image
       steps:
       - task: Docker@2
+        displayName: buildImage
         inputs:
           containerRegistry: 'DockerHub'
           repository: 'mohaemdhani/$(projectName)'
           command: 'build'
           Dockerfile: '**/Dockerfile'
+      - task: Docker@2
+        displayName:  Push Image
+        inputs:
+          containerRegistry: 'DockerHub'
+          repository: 'mohaemdhani/$(projectName)'
+          command: 'push'
       
 
 
