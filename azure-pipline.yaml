@@ -17,7 +17,7 @@ stages:
       displayName: Build Image
       container:
         image: "gcr.io/kaniko-project/executor:debug"
-        options: --entrypoint "/busybox/sleep"  9999
+        options: --entrypoint "/busybox/cat"  
       steps:
       - script: |
           #!/busybox/sh
